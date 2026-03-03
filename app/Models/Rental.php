@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Rental extends Model
 {
@@ -12,9 +13,19 @@ class Rental extends Model
 
     protected $fillable = ['start_date', 'end_date', 'total_price', 'user_id', 'equipment_id'];
 
-    public function language() : BelongsTo
+    public function user() : BelongsTo
     {
-        return $this->belongsTo('App\Models\Language');
+        return $this->belongsTo(User::class); //'App\Models\User'
+    }
+
+    public function equipment() : BelongsTo
+    {
+        return $this->belongsTo(Equipment::class); //'App\Models\Equipment'
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class); //'App\Models\Review'
     }
 
 }

@@ -22,11 +22,11 @@ class User extends Authenticatable
 
     public function rentals(): HasMany
     {
-        return $this->hasMany('App\Models\Rental');
+        return $this->hasMany(Rental::class); //'App\Models\Rental'
     }
 
     public function reviews(): HasMany
     {
-        return $this->hasMany('App\Models\Review');
+        return $this->hasMany(Review::class); //'App\Models\Review'
     }
 }

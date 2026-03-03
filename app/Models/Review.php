@@ -14,11 +14,11 @@ class Review extends Model
 
     public function user() : BelongsTo
     {
-        return $this->belongsTo('App\Models\User');
+        return $this->belongsTo(User::class); //'App\Models\User'
     }
 
     public function rental() : BelongsTo
     {
-        return $this->belongsTo('App\Models\Rental');
+        return $this->belongsTo(Rental::class); //'App\Models\Rental'
     }
 }

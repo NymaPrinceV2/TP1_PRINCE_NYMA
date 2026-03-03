@@ -14,6 +14,6 @@ class Category extends Model
 
     public function equipments(): HasMany
     {
-        return $this->hasMany('App\Models\Equipment');
+        return $this->hasMany(Equipment::class); //'App\Models\Equipment'
     }
 }
