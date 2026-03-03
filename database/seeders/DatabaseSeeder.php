@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Log;
 // use Database\Seeders\EquipmentSeeder;
 // use Database\Seeders\EquipmentSportSeeder;
 // use Database\Seeders\SportSeeder;
+use App\Models\Rental;
+use App\Models\Review;
 
 class DatabaseSeeder extends Seeder
 {
@@ -29,5 +31,9 @@ class DatabaseSeeder extends Seeder
             EquipmentSeeder::class,
             EquipmentSportSeeder::class,
         ]);
+
+        User::factory(10)->create();
+        Rental::factory(10)->create();
+        Review::factory(10)->create();
     }
 }

@@ -19,8 +19,10 @@ class ReviewFactory extends Factory
     {
 
         return [
-            'name' => fake()->name(),
-            'department' => fake()->name(),
+            'rating' => fake()->numberBetween($min = -128, $max = 127) ,
+            'comment' => fake()->text(),
+            'user_id' => fake()->numberBetween($min = 1, $max = 10) ,
+            'rental_id' => fake()->numberBetween($min = 1, $max = 10) ,
         ];
     }
 }

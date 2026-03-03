@@ -19,8 +19,11 @@ class RentalFactory extends Factory
     {
 
         return [
-            'name' => fake()->name(),
-            'department' => fake()->name(),
+            'start_date' => fake()->dateTime($max = 'now', $timezone = null) ,
+            'end_date' => fake()->dateTime($max = 'now', $timezone = null) ,
+            'total_price' => fake()->numberBetween($min = 0, $max = 10000000) ,
+            'user_id' => fake()->numberBetween($min = 1, $max = 10) ,
+            'equipment_id' => fake()->numberBetween($min = 1, $max = 5) ,
         ];
     }
 }
