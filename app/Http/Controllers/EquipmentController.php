@@ -13,7 +13,7 @@ class EquipmentController extends Controller
      */
     public function index()
     {
-        return EquipmentResource::collection(Equipment::with(['category', 'sports'])->paginate(20))->response()->setStatusCode(200);
+        return EquipmentResource::collection(Equipment::paginate(20))->response()->setStatusCode(200);
     }
 
     /**
@@ -29,7 +29,7 @@ class EquipmentController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return (new EquipmentResource(Equipment::find($id)))->response()->setStatusCode(200);
     }
 
     /**
