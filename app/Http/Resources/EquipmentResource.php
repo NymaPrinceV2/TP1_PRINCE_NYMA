@@ -18,8 +18,8 @@ class EquipmentResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'daily_price' => $this->daily_price,
-            'category_id' => $this->category_id
+            'category' => new CategoryResource($this->category),
+            'sports' => SportResource::collection($this->sports)
         ];
-
     }
 }

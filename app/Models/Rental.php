@@ -15,17 +15,17 @@ class Rental extends Model
 
     public function user() : BelongsTo
     {
-        return $this->belongsTo(User::class); //'App\Models\User'
+        return $this->belongsTo(User::class);
     }
 
     public function equipment() : BelongsTo
     {
-        return $this->belongsTo(Equipment::class); //'App\Models\Equipment'
+        return $this->belongsTo(Equipment::class);
     }
 
     public function reviews(): HasMany
     {
-        return $this->hasMany(Review::class); //'App\Models\Review'
+        return $this->hasMany(Review::class);
     }
 
 }
