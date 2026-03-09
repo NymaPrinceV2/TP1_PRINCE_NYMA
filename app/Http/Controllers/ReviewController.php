@@ -43,8 +43,18 @@ class ReviewController extends Controller
      */
     public function destroy(string $id)
     {
-        $review = Review::findOrFail($id);
+        try{
+            $review = Review::findOrFail($id);
 
-        $review->delete();
+            $review->delete();
+
+            return response(status: NO_CONTENT);
+        }
+        catch(QueryException $ex){
+            abort(NOT_FOUND, "invalid Id");
+        }
+        catch(Exception $ex){
+            abort(SERVER_ERROR, "server_error");
+        }
     }
 }

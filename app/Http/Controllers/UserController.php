@@ -20,8 +20,17 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        $user = User::create($request->validated());
-        return (new UserResource($song))->response()->setStatusCode(201);
+
+        try{
+            $user = User::create($request->validated());
+            return (new UserResource($user))->response()->setStatusCode(CREATED);
+        }
+        catch(QueryException $ex){
+            abort(NOT_FOUND, "invalid Id");
+        }
+        catch(Exception $ex){
+            abort(SERVER_ERROR, "server_error");
+        }
     }
 
     /**
@@ -37,14 +46,23 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $user = User::findOrFail($id);
+        try{
+            $user = User::findOrFail($id);
 
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
-        $user->email = $request->email;
-        $user->phone = $request->phone;
+            $user->first_name = $request->first_name;
+            $user->last_name = $request->last_name;
+            $user->email = $request->email;
+            $user->phone = $request->phone;
 
-        $user->save();
+            $user->save();
+            return (new UserResource($user))->response()->setStatusCode(OK);
+        }
+        catch(QueryException $ex){
+            abort(NOT_FOUND, "invalid Id");
+        }
+        catch(Exception $ex){
+            abort(SERVER_ERROR, "server_error");
+        }
     }
 
     /**

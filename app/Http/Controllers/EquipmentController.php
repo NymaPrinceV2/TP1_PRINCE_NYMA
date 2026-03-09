@@ -15,7 +15,12 @@ class EquipmentController extends Controller
      */
     public function index()
     {
-        return EquipmentResource::collection(Equipment::paginate(20))->response()->setStatusCode(200);
+        try{
+            return EquipmentResource::collection(Equipment::paginate(20))->response()->setStatusCode(OK);
+        }
+        catch(Exception $ex){
+            abort(SERVER_ERROR, "server_error");
+        }
     }
 
     /**
@@ -31,7 +36,15 @@ class EquipmentController extends Controller
      */
     public function show(string $id)
     {
-        return (new EquipmentResource(Equipment::find($id)))->response()->setStatusCode(200);
+        try{
+            return (new EquipmentResource(Equipment::find($id)))->response()->setStatusCode(OK);
+        }
+        catch(QueryException $ex){
+            abort(NOT_FOUND, "invalid Id");
+        }
+        catch(Exception $ex){
+            abort(SERVER_ERROR, "server_error");
+        }
     }
 
     /**
@@ -50,9 +63,16 @@ class EquipmentController extends Controller
     }
 
     public function getPopularityIndex($id){
-        define('POPULARITY_PONDERATION', 0.6);
-        define('RATING_PONDERATION', 0.4);
-        $equipment = Equipment::findOrFail($id);
+
+        try{
+            $equipment = Equipment::findOrFail($id);
+        }
+        catch(QueryException $ex){
+            abort(NOT_FOUND, "invalid Id");
+        }
+        catch(Exception $ex){
+            abort(SERVER_ERROR, "server_error");
+        }
         $nbOfLocations = Rental::where('equipment_id', $id)->count();
         $avgRating = 0;
         $nbOfRating = 0;
@@ -63,7 +83,36 @@ class EquipmentController extends Controller
         if($nbOfRating != 0){
             $avgRating /= $nbOfRating;
         }
-        return (response()->json(['popularityIndex' => ($nbOfLocations * POPULARITY_PONDERATION + $avgRating * RATING_PONDERATION)]))->setStatusCode(200);
 
+        try{
+            return (response()->json(['popularityIndex' => ($nbOfLocations * POPULARITY_PONDERATION + $avgRating * RATING_PONDERATION)]))->setStatusCode(OK);
+        }
+        catch(Exception $ex){
+            abort(SERVER_ERROR, "server_error");
+        }
+
+    }
+
+    public function getAverageRentalPrice($id, $minDate = '1000-01-01', $maxDate = '3000-01-01'){
+        if($minDate > $maxDate){
+            abort(422, 'invalid data');
+        }
+
+        try{
+            Rental::findOrFail($id);
+        }
+        catch(QueryException $ex){
+            abort(NOT_FOUND, "invalid Id");
+        }
+        catch(Exception $ex){
+            abort(SERVER_ERROR, "server_error");
+        }
+
+        $averageRentalPrice = Rental::where('equipment_id', '=', $id)->where('start_date', '>', $minDate)->where('end_date', '<', $maxDate)->avg('total_price');
+        if($averageRentalPrice == null){
+            $averageRentalPrice = 0;
+        }
+
+        return (response()->json(['averageRentalPrice' => $averageRentalPrice]))->setStatusCode(OK);
     }
 }
