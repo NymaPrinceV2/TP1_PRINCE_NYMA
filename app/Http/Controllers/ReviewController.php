@@ -43,6 +43,8 @@ class ReviewController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $review = Review::findOrFail($id);
+
+        $review->delete();
     }
 }
