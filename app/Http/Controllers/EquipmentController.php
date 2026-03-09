@@ -7,6 +7,7 @@ use App\Http\Resources\EquipmentResource;
 use App\Models\Equipment;
 use App\Models\Rental;
 use App\Models\Review;
+use DateTime;
 
 class EquipmentController extends Controller
 {
@@ -93,13 +94,21 @@ class EquipmentController extends Controller
 
     }
 
-    public function getAverageRentalPrice($id, $minDate = '1000-01-01', $maxDate = '3000-01-01'){
-        if($minDate > $maxDate){
-            abort(422, 'invalid data');
+    public function getAverageRentalPrice($id, $minDate = null, $maxDate = null){
+        if($minDate == null){
+            $minDate = DEFAULT_MIN_DATE;
+        }
+
+        if($maxDate == null){
+            $maxDate = DEFAULT_MAX_DATE;
+        }
+
+        if($minDate > $maxDate || DateTime::createFromFormat('Y-m-d', $minDate) == false || DateTime::createFromFormat('Y-m-d', $maxDate) == false){ //vérification des data
+            abort(INVALID_DATA, 'invalid data');
         }
 
         try{
-            Rental::findOrFail($id);
+            Equipment::findOrFail($id);
         }
         catch(QueryException $ex){
             abort(NOT_FOUND, "invalid Id");
