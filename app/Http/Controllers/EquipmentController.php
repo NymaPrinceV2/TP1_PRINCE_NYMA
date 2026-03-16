@@ -38,7 +38,7 @@ class EquipmentController extends Controller
     public function show(string $id)
     {
         try{
-            return (new EquipmentResource(Equipment::find($id)))->response()->setStatusCode(OK);
+            return (new EquipmentResource(Equipment::findOrFail($id)))->response()->setStatusCode(OK);
         }
         catch(QueryException $ex){
             abort(NOT_FOUND, "invalid Id");
