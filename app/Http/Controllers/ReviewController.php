@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Review;
+use OpenApi\Attributes as OA;
 
 class ReviewController extends Controller
 {
@@ -42,6 +43,28 @@ class ReviewController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    #[OA\Get(
+        path: "/reviews/{id}",
+        summary: "suppression des critiques",
+        tags: ["Critiques"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                description: "ID de l\' utilisateur à supprimer",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: "204", description: "NO_CONTENT"
+            ),
+            new OA\Response(
+                response: "404", description: "NOT_FOUND"
+            )
+        ]
+    )]
     public function destroy(string $id)
     {
         try{

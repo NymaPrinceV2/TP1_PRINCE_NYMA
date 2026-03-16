@@ -8,12 +8,23 @@ use App\Models\Equipment;
 use App\Models\Rental;
 use App\Models\Review;
 use DateTime;
+use OpenApi\Attributes as OA;
 
 class EquipmentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    #[OA\Get(
+        path: "/api/equipments",
+        summary: "Liste de tous les équipements",
+        tags: ["Équipements"],
+        responses: [
+            new OA\Response(
+                response: "200", description: "OK"
+            )
+        ]
+    )]
     public function index()
     {
         try{
@@ -35,6 +46,28 @@ class EquipmentController extends Controller
     /**
      * Display the specified resource.
      */
+    #[OA\Get(
+        path: "/api/equipments/{id}",
+        summary: "Afficher un équipement",
+        tags: ["Équipements"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                description: "ID de l'équipment",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: "200", description: "OK"
+            ),
+            new OA\Response(
+                response: "404", description: "Équipement non trouvé"
+            )
+        ]
+    )]
     public function show(string $id)
     {
         try{
@@ -63,6 +96,34 @@ class EquipmentController extends Controller
         //
     }
 
+    #[OA\Get(
+        path: '/api/equipments/{id}/popularity_indexes',
+        summary: 'Obtenir l\'index de popularité d\'un équipement',
+        tags: ['Équipements'],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                description: 'ID de l\'équipement',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Succès'
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Équipement non trouvé'
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Erreur serveur'
+            )
+        ]
+    )]
     public function getPopularityIndex($id){
 
         try{
@@ -100,6 +161,48 @@ class EquipmentController extends Controller
 
     }
 
+    #[OA\Get(
+        path: '/api/equipments/{id}/average_rental_price/{minDate?}/{maxDate?}',
+        summary: 'Obtenir le prix moyen d\'un équipement sur une période de temps prédéfinie',
+        tags: ['Équipements'],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                description: 'ID de l\'équipement',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            ),
+            new OA\Parameter(
+                name: 'minDate',
+                description: 'date minimal de début des locations que nous prendrons en compte dans le calcul du prix moyen de location de l\'équipement',
+                in: 'path',
+                required: false,
+                schema: new OA\Schema(type: 'string')
+            ),
+            new OA\Parameter(
+                name: 'maxDate',
+                description: 'date maximal de fin des locations que nous prendrons en compte dans le calcul du prix moyen de location de l\'équipement',
+                in: 'path',
+                required: false,
+                schema: new OA\Schema(type: 'string')
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Succès'
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Équipement non trouvé'
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Erreur serveur'
+            )
+        ]
+    )]
     public function getAverageRentalPrice(Request $request, $id){
         $minDate = $request->query('minDate');
         $maxDate = $request->query('maxDate');

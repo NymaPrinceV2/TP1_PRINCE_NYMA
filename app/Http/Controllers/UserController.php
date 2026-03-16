@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use App\Http\Resources\UserResource;
+use OpenApi\Attributes as OA;
 
 class UserController extends Controller
 {
@@ -20,6 +21,33 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    #[OA\Post(
+        path: "/api/users",
+        summary: "Créer un utilisateur",
+        tags: ["Utilisateurs"],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [
+                new OA\JsonContent(
+                    required: ["first_name", "last_name", "email", "phone"],
+                    properties: [
+                        new OA\Property(property: "first_name", type: "string", example: "Joe"),
+                        new OA\Property(property: "last_name", type: "string", example: "Biden"),
+                        new OA\Property(property: "email", type: "string", example: "email@gmail.com"),
+                        new OA\Property(property: "phone", type: "string", example: "581-100-1000"),
+                    ]
+                )
+            ]
+        ),
+        responses: [
+            new OA\Response(
+                response: "201", description: "Album créé"
+            ),
+            new OA\Response(
+                response: "422", description: "Données invalides"
+            )
+        ]
+    )]
     public function store(StoreUserRequest $request)
     {
 
@@ -46,6 +74,42 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    #[OA\Put(
+        path: "/api/users/{id}",
+        summary: "Modifier un utilisateur",
+        tags: ["Utilisateurs"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                description: "ID de l'utilisateur à supprimer",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+            )
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [
+                new OA\JsonContent(
+                    required: ["first_name", "last_name", "email", "phone"],
+                    properties: [
+                        new OA\Property(property: "first_name", type: "string", example: "Joe"),
+                        new OA\Property(property: "last_name", type: "string", example: "Biden"),
+                        new OA\Property(property: "email", type: "string", example: "email@gmail.com"),
+                        new OA\Property(property: "phone", type: "string", example: "581-100-1000"),
+                    ]
+                )
+            ]
+        ),
+        responses: [
+            new OA\Response(
+                response: "201", description: "Album créé"
+            ),
+            new OA\Response(
+                response: "422", description: "Données invalides"
+            )
+        ]
+    )]
     public function update(Request $request, string $id)
     {
         try{
