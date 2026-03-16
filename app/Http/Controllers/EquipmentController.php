@@ -77,7 +77,8 @@ class EquipmentController extends Controller
         $nbOfLocations = Rental::where('equipment_id', $id)->count();
         $avgRating = 0;
         $nbOfRating = 0;
-        foreach(Review::where('equipment_id', $equipment->id)->get() as $review){
+        $rentalIds = Rental::where('equipment_id', $id)->pluck('id');
+        foreach(Review::whereIn('rental_id', $rentalIds)->get() as $review){
             $avgRating += $review->rating;
             $nbOfRating ++;
         }
@@ -86,7 +87,12 @@ class EquipmentController extends Controller
         }
 
         try{
-            return (response()->json(['popularityIndex' => ($nbOfLocations * POPULARITY_PONDERATION + $avgRating * RATING_PONDERATION)]))->setStatusCode(OK);
+            if($nbOfRating != 0){
+                return (response()->json(['popularityIndex' => ($nbOfLocations * POPULARITY_PONDERATION + $avgRating * RATING_PONDERATION)]))->setStatusCode(OK);
+            }
+            else{
+                return (response()->json(['popularityIndex' => 0]))->setStatusCode(OK);
+            }
         }
         catch(Exception $ex){
             abort(SERVER_ERROR, "server_error");
@@ -94,7 +100,18 @@ class EquipmentController extends Controller
 
     }
 
-    public function getAverageRentalPrice($id, $minDate = null, $maxDate = null){
+    public function getAverageRentalPrice(Request $request, $id){
+        $minDate = $request->query('minDate');
+        $maxDate = $request->query('maxDate');
+
+        if($minDate !== null && DateTime::createFromFormat('Y-m-d', $minDate) === false){
+            abort(INVALID_DATA, 'invalid data');
+        }
+
+        if($maxDate !== null && DateTime::createFromFormat('Y-m-d', $maxDate) === false){
+            abort(INVALID_DATA, 'invalid data');
+        }
+
         if($minDate == null){
             $minDate = DEFAULT_MIN_DATE;
         }
@@ -103,7 +120,7 @@ class EquipmentController extends Controller
             $maxDate = DEFAULT_MAX_DATE;
         }
 
-        if($minDate > $maxDate || DateTime::createFromFormat('Y-m-d', $minDate) == false || DateTime::createFromFormat('Y-m-d', $maxDate) == false){ //vérification des data
+        if($minDate > $maxDate){
             abort(INVALID_DATA, 'invalid data');
         }
 
@@ -117,7 +134,7 @@ class EquipmentController extends Controller
             abort(SERVER_ERROR, "server_error");
         }
 
-        $averageRentalPrice = Rental::where('equipment_id', '=', $id)->where('start_date', '>', $minDate)->where('end_date', '<', $maxDate)->avg('total_price');
+        $averageRentalPrice = Rental::where('equipment_id', '=', $id)->where('start_date', '>=', $minDate)->where('end_date', '<=', $maxDate)->avg('total_price');
         if($averageRentalPrice == null){
             $averageRentalPrice = 0;
         }
