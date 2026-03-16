@@ -114,7 +114,7 @@ class UserTest extends TestCase
             'phone' => '581-123-1234'
         ];
 
-        $response = $this->postJson('/api/users/1',$json);
+        $response = $this->putJson('/api/users/1',$json);
 
         $response->assertStatus(422);
     }
@@ -129,7 +129,7 @@ class UserTest extends TestCase
             'phone' => '581-123-1234'
         ];
 
-        $response = $this->postJson('/api/users/1',$json);
+        $response = $this->putJson('/api/users/1',$json);
 
         $response->assertStatus(422);
     }
@@ -143,7 +143,7 @@ class UserTest extends TestCase
             'phone' => '581-123-1234'
         ];
 
-        $response = $this->postJson('/api/users/1',$json);
+        $response = $this->putJson('/api/users/1',$json);
 
         $response->assertStatus(422);
     }
